@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Gift, Users, DollarSign, AlertCircle, Trash2, Sparkles, Copy, CheckCheck } from "lucide-react"
+import { Gift, Users, DollarSign, AlertCircle, Trash2, Sparkles, Copy, CheckCheck, Link2, ExternalLink } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface Participant {
@@ -144,41 +144,34 @@ export default function SecretSantaPage() {
     setCopiedMessages(new Set())
   }
 
-  const createSurpriseMessage = (giverName: string, receiverName: string) => {
-    const surpriseIntros = [
-      "🎅 ¡Ho ho ho! Tengo una misión especial para ti...",
-      "🎄 ¡Atención! El espíritu navideño tiene un mensaje secreto...",
-      "🎁 ¡Prepárate para descubrir tu destino navideño!",
-      "⭐ Las estrellas han decidido... ¡Es hora de revelar tu misión!",
-      "🔔 ¡Ding dong! Santa tiene noticias emocionantes para ti...",
-      "🎉 ¡Momento mágico! Se acerca la gran revelación...",
-    ]
-
-    const suspenseLines = [
-      "🥁 Redoble de tambores por favor...",
-      "✨ Abracadabra... ¡Que la magia comience!",
-      "🎪 Y el sobre dice...",
-      "🌟 Después de consultar con los elfos...",
-      "🎭 ¡Prepárate para la gran sorpresa!",
-      "🎺 ¡Tararán!",
-    ]
-
-    const randomIntro = surpriseIntros[Math.floor(Math.random() * surpriseIntros.length)]
-    const randomSuspense = suspenseLines[Math.floor(Math.random() * suspenseLines.length)]
-
-    let message = `${randomIntro}\n\n`
-    message += `Hola ${giverName}, 🎅\n\n`
-    message += `${randomSuspense}\n\n`
-    message += `🎁 ¡Tu misión secreta es hacer feliz a...\n\n`
-    message += `✨✨✨ *${receiverName}* ✨✨✨\n\n`
-    message += `💰 Presupuesto máximo: €${budget}\n`
-
-    if (groupNotes) {
-      message += `\n📝 Detalles importantes:\n${groupNotes}\n`
+  const createSecretToken = (giverName: string, receiverName: string) => {
+    const data = {
+      giver: giverName,
+      receiver: receiverName,
+      budget: budget,
+      notes: groupNotes || undefined
     }
+    return encodeURIComponent(btoa(JSON.stringify(data)))
+  }
 
-    message += `\n🤫 Recuerda: ¡Es un SECRETO! No reveles que eres su Amic Invisible.\n`
-    message += `\n🎄 ¡Que comience la magia navideña! 🎅✨`
+  const createSecretLink = (giverName: string, receiverName: string) => {
+    const token = createSecretToken(giverName, receiverName)
+    if (typeof window !== "undefined") {
+      return `${window.location.origin}/reveal/${token}`
+    }
+    return `/reveal/${token}`
+  }
+
+  const createSurpriseMessage = (giverName: string, receiverName: string) => {
+    const link = createSecretLink(giverName, receiverName)
+
+    let message = `🎁 *Amic Invisible* 🎁\n\n`
+    message += `Hola ${giverName}! 🎅\n\n`
+    message += `Tens un missatge secret esperant-te...\n\n`
+    message += `👉 Obre aquest link per descobrir a qui has de fer el regal:\n\n`
+    message += `${link}\n\n`
+    message += `🤫 Recorda: és un SECRET! No ho comparteixis amb ningú.\n`
+    message += `\n🎄 Bones festes! ✨`
 
     return message
   }
@@ -395,25 +388,30 @@ export default function SecretSantaPage() {
             {/* Results Section */}
             <Card className="border-2 border-primary">
               <CardHeader>
-                <CardTitle className="text-2xl text-center">Amic Invisible Generat</CardTitle>
+                <CardTitle className="text-2xl text-center">Amic Invisible Generat!</CardTitle>
                 <CardDescription className="text-center">
-                  Copia cada mensaje y envíalo manualmente a cada participante
+                  Envia cada link secret al seu destinatari. El nom romandrà ocult fins que obrin la caixa!
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="bg-muted p-4 rounded-lg text-center">
-                  <p className="font-medium">Presupuesto: €{budget}</p>
-                  <p className="text-sm text-muted-foreground mt-1">Total de participantes: {participants.length}</p>
+                  <p className="font-medium">Pressupost: {budget}€</p>
+                  <p className="text-sm text-muted-foreground mt-1">Total de participants: {participants.length}</p>
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-lg text-center">Mensajes para Enviar</h3>
+                  <div className="flex items-center justify-center gap-2">
+                    <Link2 className="h-5 w-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Links Secrets</h3>
+                  </div>
                   <p className="text-sm text-muted-foreground text-center">
-                    Haz clic en "Copiar" y envía cada mensaje por WhatsApp, Telegram o tu método preferido
+                    Copia i envia cada missatge per WhatsApp, Telegram o el teu mètode preferit.
+                    Quan obrin el link, veuran una caixa animada amb confeti!
                   </p>
 
                   {assignments.map((assignment, index) => {
                     const message = createSurpriseMessage(assignment.giver, assignment.receiver)
+                    const secretLink = createSecretLink(assignment.giver, assignment.receiver)
                     const isCopied = copiedMessages.has(index)
 
                     return (
@@ -422,32 +420,42 @@ export default function SecretSantaPage() {
                         className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-secondary/5"
                       >
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-lg text-center">
-                            Mensaje para: <span className="text-primary">{assignment.giver}</span>
+                          <CardTitle className="text-lg flex items-center justify-center gap-2">
+                            <Gift className="h-5 w-5" />
+                            Missatge per: <span className="text-primary">{assignment.giver}</span>
                           </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
                           <div className="bg-background/80 p-4 rounded-lg border">
                             <pre className="text-sm whitespace-pre-wrap font-sans">{message}</pre>
                           </div>
-                          <Button
-                            onClick={() => copyMessage(index, message)}
-                            variant={isCopied ? "default" : "outline"}
-                            size="lg"
-                            className="w-full"
-                          >
-                            {isCopied ? (
-                              <>
-                                <CheckCheck className="h-5 w-5 mr-2" />
-                                Copiado
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="h-5 w-5 mr-2" />
-                                Copiar Mensaje
-                              </>
-                            )}
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              onClick={() => copyMessage(index, message)}
+                              variant={isCopied ? "default" : "outline"}
+                              size="lg"
+                              className="flex-1"
+                            >
+                              {isCopied ? (
+                                <>
+                                  <CheckCheck className="h-5 w-5 mr-2" />
+                                  Copiat!
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-5 w-5 mr-2" />
+                                  Copiar Missatge
+                                </>
+                              )}
+                            </Button>
+                            <Button
+                              onClick={() => window.open(secretLink, "_blank")}
+                              variant="secondary"
+                              size="lg"
+                            >
+                              <ExternalLink className="h-5 w-5" />
+                            </Button>
+                          </div>
                         </CardContent>
                       </Card>
                     )
