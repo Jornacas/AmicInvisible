@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Gift, Users, DollarSign, AlertCircle, Trash2, Sparkles, Copy, CheckCheck, Link2, ExternalLink } from "lucide-react"
+import { Gift, Users, DollarSign, AlertCircle, Trash2, Sparkles, Share2, CheckCheck, Link2, ExternalLink } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface Participant {
@@ -176,7 +176,30 @@ export default function SecretSantaPage() {
     return message
   }
 
-  const copyMessage = (index: number, message: string) => {
+  const shareMessage = async (index: number, giverName: string, message: string) => {
+    // Try native share first (mobile)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Amic Invisible - ${giverName}`,
+          text: message,
+        })
+        setCopiedMessages(new Set(copiedMessages).add(index))
+        setTimeout(() => {
+          setCopiedMessages((prev) => {
+            const newSet = new Set(prev)
+            newSet.delete(index)
+            return newSet
+          })
+        }, 2000)
+        return
+      } catch (err) {
+        // User cancelled or share failed, fall back to clipboard
+        if ((err as Error).name === 'AbortError') return
+      }
+    }
+
+    // Fallback to clipboard
     navigator.clipboard.writeText(message)
     setCopiedMessages(new Set(copiedMessages).add(index))
     setTimeout(() => {
@@ -431,7 +454,7 @@ export default function SecretSantaPage() {
                           </div>
                           <div className="flex gap-2">
                             <Button
-                              onClick={() => copyMessage(index, message)}
+                              onClick={() => shareMessage(index, assignment.giver, message)}
                               variant={isCopied ? "default" : "outline"}
                               size="lg"
                               className="flex-1"
@@ -439,12 +462,12 @@ export default function SecretSantaPage() {
                               {isCopied ? (
                                 <>
                                   <CheckCheck className="h-5 w-5 mr-2" />
-                                  Copiat!
+                                  Enviat!
                                 </>
                               ) : (
                                 <>
-                                  <Copy className="h-5 w-5 mr-2" />
-                                  Copiar Missatge
+                                  <Share2 className="h-5 w-5 mr-2" />
+                                  Compartir
                                 </>
                               )}
                             </Button>
@@ -452,6 +475,7 @@ export default function SecretSantaPage() {
                               onClick={() => window.open(secretLink, "_blank")}
                               variant="secondary"
                               size="lg"
+                              title="Previsualitzar"
                             >
                               <ExternalLink className="h-5 w-5" />
                             </Button>
