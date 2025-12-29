@@ -8,26 +8,12 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Amic Invisible - Organizador de Intercambio de Regalos",
+  title: "Amic Invisible",
   description:
-    "Organiza tu intercambio de regalos Amic Invisible de forma fácil y divertida. Agrega participantes, establece restricciones y genera asignaciones automáticamente.",
-  generator: "v0.app",
+    "Organitza el teu intercanvi de regals Amic Invisible de forma fàcil i divertida. Afegeix participants, estableix restriccions i genera assignacions automàticament.",
   icons: {
-    icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
-    ],
-    apple: "/apple-icon.png",
+    icon: "/icono.png",
+    apple: "/icono.png",
   },
 }
 

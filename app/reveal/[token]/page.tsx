@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation"
 import { useMemo } from "react"
+import Image from "next/image"
 import { GiftBox } from "@/components/gift-box"
-import { Gift } from "lucide-react"
 
 interface SecretData {
   giver: string
@@ -34,10 +34,10 @@ export default function RevealPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 flex items-center justify-center p-4">
         <div className="text-center">
-          <Gift className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Link no valid</h1>
+          <Image src="/icono.png" alt="Amic Invisible" width={64} height={64} className="mx-auto mb-4 rounded-xl opacity-50" />
+          <h1 className="text-2xl font-bold mb-2">Link no vàlid</h1>
           <p className="text-muted-foreground">
-            Aquest link no es valid o ha caducat.
+            Aquest link no és vàlid o ha caducat.
           </p>
         </div>
       </div>
@@ -50,7 +50,7 @@ export default function RevealPage() {
         {/* Header */}
         <div className="text-center pt-8 pb-4">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Gift className="h-8 w-8 text-primary" />
+            <Image src="/icono.png" alt="Amic Invisible" width={40} height={40} className="rounded-lg" />
             <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Amic Invisible
             </h1>

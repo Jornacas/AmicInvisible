@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -216,14 +217,13 @@ export default function SecretSantaPage() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-10">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Gift className="h-12 w-12 text-primary" />
+            <Image src="/icono.png" alt="Amic Invisible" width={56} height={56} className="rounded-xl" />
             <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
               Amic Invisible
             </h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Organiza tu intercambio de regalos de forma divertida y sencilla. Genera mensajes sorpresa para enviar
-            manualmente.
+            Organitza el teu intercanvi de regals de forma divertida i senzilla.
           </p>
         </div>
 
